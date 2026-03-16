@@ -49,8 +49,8 @@ export async function PUT(
   const { id } = await params;
   const body = await req.json();
 
-  // 分离 tags 和 prompt 数据
-  const { tags, ...promptData } = body;
+  // 分离 tags、reference_images 和 prompt 数据
+  const { tags, reference_images, ...promptData } = body;
 
   // 更新 prompt
   const { data, error } = await supabaseAdmin
@@ -91,6 +91,31 @@ export async function PUT(
           prompt_id: id,
           tag_id: tagData.id,
         });
+      }
+    }
+  }
+
+  // 更新参考图 (如果提供了 reference_images)
+  if (reference_images && Array.isArray(reference_images)) {
+    // 删除旧参考图
+    await supabaseAdmin.from("reference_images").delete().eq("prompt_id", id);
+
+    // 插入新参考图
+    if (reference_images.length > 0) {
+      const refRows = reference_images.map((ref: { image_url: string; thumb_url?: string; ref_type?: string; sort_order?: number }, idx: number) => ({
+        prompt_id: id,
+        image_url: ref.image_url,
+        thumb_url: ref.thumb_url || null,
+        ref_type: ref.ref_type || "source",
+        sort_order: ref.sort_order ?? idx,
+      }));
+
+      const { error: refError } = await supabaseAdmin
+        .from("reference_images")
+        .insert(refRows);
+
+      if (refError) {
+        console.error("[Prompts PUT] Reference images error:", refError);
       }
     }
   }

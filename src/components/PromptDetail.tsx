@@ -98,6 +98,7 @@ export default function PromptDetail({ prompt }: PromptDetailProps) {
     sref: "风格参考",
     cref: "角色参考",
     oref: "全局参考",
+    result: "生成结果",
   };
 
   return (

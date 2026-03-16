@@ -123,6 +123,7 @@ export async function POST(req: Request) {
     mj_moodboard_id,
     mj_raw_params,
     tags, // string[] — tag names
+    reference_images, // { image_url, thumb_url, ref_type, sort_order }[]
   } = body;
 
   // 基础校验
@@ -202,6 +203,26 @@ export async function POST(req: Request) {
           tag_id: tagData.id,
         });
       }
+    }
+  }
+
+  // 3. 处理参考图 (如果有)
+  if (reference_images && Array.isArray(reference_images) && reference_images.length > 0) {
+    const refRows = reference_images.map((ref: { image_url: string; thumb_url?: string; ref_type?: string; sort_order?: number }, idx: number) => ({
+      prompt_id: prompt.id,
+      image_url: ref.image_url,
+      thumb_url: ref.thumb_url || null,
+      ref_type: ref.ref_type || "source",
+      sort_order: ref.sort_order ?? idx,
+    }));
+
+    const { error: refError } = await supabaseAdmin
+      .from("reference_images")
+      .insert(refRows);
+
+    if (refError) {
+      console.error("[Prompts POST] Reference images error:", refError);
+      // 不阻塞主流程，仅记录错误
     }
   }
 

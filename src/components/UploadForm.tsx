@@ -1,11 +1,14 @@
 "use client";
 
-// components/UploadForm.tsx — 上传表单主体
+// components/UploadForm.tsx — 上传表单主体 (支持多图 + 参考图)
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PromptParser from "./PromptParser";
-import ImageUploader from "./ImageUploader";
+import MultiImageUploader from "./MultiImageUploader";
+import type { UploadedImage } from "./MultiImageUploader";
+import ReferenceImageUploader from "./ReferenceImageUploader";
+import type { RefImage } from "./ReferenceImageUploader";
 import TagInput from "./TagInput";
 import type { MjParsedResult } from "@/lib/mj-parser";
 import { getPlatformOptions } from "@/lib/platforms";
@@ -23,11 +26,13 @@ export default function UploadForm() {
   const [type, setType] = useState<"txt2img" | "img2img">("txt2img");
   const [status, setStatus] = useState<"published" | "draft">("published");
   const [isNsfw, setIsNsfw] = useState(false);
-  const [mainImageUrl, setMainImageUrl] = useState("");
-  const [thumbImageUrl, setThumbImageUrl] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [parsedParams, setParsedParams] = useState<MjParsedResult["params"]>({});
   const [rawParams, setRawParams] = useState("");
+
+  // 多图上传 state
+  const [mainImages, setMainImages] = useState<UploadedImage[]>([]);
+  const [refImages, setRefImages] = useState<RefImage[]>([]);
 
   // UI state
   const [submitting, setSubmitting] = useState(false);
@@ -50,11 +55,6 @@ export default function UploadForm() {
     }
   }
 
-  function handleImageUpload(publicUrl: string, thumbUrl: string) {
-    setMainImageUrl(publicUrl);
-    setThumbImageUrl(thumbUrl);
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim() || !promptText.trim()) {
@@ -62,10 +62,44 @@ export default function UploadForm() {
       return;
     }
 
+    // 检查是否有图片仍在上传中
+    const allUploading = [
+      ...mainImages.filter((i) => i.status === "uploading"),
+      ...refImages.filter((i) => i.status === "uploading"),
+    ];
+    if (allUploading.length > 0) {
+      setError("还有图片正在上传，请稍候...");
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
 
     try {
+      // 取第一张已上传的主图
+      const doneMainImages = mainImages.filter((i) => i.status === "done");
+      const firstMain = doneMainImages[0];
+
+      // 额外主图 → 存为 ref_type = 'result'
+      const extraMainAsRefs = doneMainImages.slice(1).map((img, idx) => ({
+        image_url: img.url,
+        thumb_url: img.thumbUrl,
+        ref_type: "result",
+        sort_order: idx,
+      }));
+
+      // 参考图
+      const refImagesPayload = refImages
+        .filter((i) => i.status === "done")
+        .map((img, idx) => ({
+          image_url: img.url,
+          thumb_url: img.thumbUrl,
+          ref_type: img.refType,
+          sort_order: extraMainAsRefs.length + idx,
+        }));
+
+      const allReferenceImages = [...extraMainAsRefs, ...refImagesPayload];
+
       const body = {
         title: title.trim(),
         prompt_text: promptText.trim(),
@@ -74,10 +108,11 @@ export default function UploadForm() {
         platform: platform === "__custom__" ? customPlatform.trim() || "other" : platform,
         status,
         is_nsfw: isNsfw,
-        main_image_url: mainImageUrl || undefined,
-        thumb_image_url: thumbImageUrl || undefined,
+        main_image_url: firstMain?.url || undefined,
+        thumb_image_url: firstMain?.thumbUrl || undefined,
         mj_raw_params: rawParams || undefined,
         tags,
+        reference_images: allReferenceImages.length > 0 ? allReferenceImages : undefined,
         ...parsedParams,
       };
 
@@ -122,19 +157,37 @@ export default function UploadForm() {
         <PromptParser onParsed={handleParsed} />
       </section>
 
-      {/* Step 2: 上传图片 */}
+      {/* Step 2: 上传主图 (支持多图) */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>
           <span className={styles.stepNum}>2</span>
           上传图片
         </h2>
-        <ImageUploader onUpload={handleImageUpload} />
+        <MultiImageUploader
+          images={mainImages}
+          onImagesChange={setMainImages}
+          label="上传生成结果图"
+          showPrimaryBadge={true}
+        />
       </section>
 
-      {/* Step 3: 补充信息 */}
+      {/* Step 3: 上传参考图 */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>
           <span className={styles.stepNum}>3</span>
+          参考图 <span style={{ fontWeight: 400, fontSize: "var(--text-sm)", color: "var(--text-tertiary)" }}>(可选)</span>
+        </h2>
+        <ReferenceImageUploader
+          images={refImages}
+          onImagesChange={setRefImages}
+          promptType={type}
+        />
+      </section>
+
+      {/* Step 4: 补充信息 */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>
+          <span className={styles.stepNum}>4</span>
           补充信息
         </h2>
 
@@ -236,10 +289,10 @@ export default function UploadForm() {
         </div>
       </section>
 
-      {/* Step 4: 标签 */}
+      {/* Step 5: 标签 */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>
-          <span className={styles.stepNum}>4</span>
+          <span className={styles.stepNum}>5</span>
           标签
         </h2>
         <TagInput value={tags} onChange={setTags} />
