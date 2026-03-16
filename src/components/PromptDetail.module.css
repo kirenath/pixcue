@@ -8,13 +8,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-@media (max-width: 768px) {
-  .detail {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-}
-
 /* Image */
 .imageSection {
   position: sticky;
@@ -23,13 +16,31 @@
 }
 
 .mainImage {
-  width: 100%;
+  max-width: 100%;
+  width: auto;
   max-height: 85vh;
-  object-fit: contain;
+  height: auto;
+  display: block;
+  margin: 0 auto;
   border: none;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-clay-lg);
   cursor: zoom-in;
+}
+
+@media (max-width: 768px) {
+  .detail {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .imageSection {
+    position: static;
+  }
+
+  .mainImage {
+    max-height: 60vh;
+  }
 }
 
 .noImage {
