@@ -122,6 +122,25 @@ describe("parseMjPrompt", () => {
     expect(result.params.mj_personalize).toBe("default");
   });
 
+  it("--profile 带值 (等同于 --p)", () => {
+    const result = parseMjPrompt("a scene --profile lm9rorl --ar 1:1");
+    expect(result.params.mj_personalize).toBe("lm9rorl");
+  });
+
+  it("--profile 在 niji prompt 中正确解析", () => {
+    const result = parseMjPrompt(
+      "character design sheet, 1 20-years-old male, purple hair, bob cut, purple eyes, cowboy shot, detailed eyes, long detailed beautiful eyelashes --ar 9:16 --profile lm9rorl --stylize 450 --niji 6"
+    );
+    expect(result.params.mj_personalize).toBe("lm9rorl");
+    expect(result.params.mj_aspect_ratio).toBe("9:16");
+    expect(result.params.mj_stylize).toBe(450);
+    expect(result.platform).toBe("nijijourney");
+    expect(result.params.mj_version).toBe("6");
+    expect(result.prompt_text).toBe(
+      "character design sheet, 1 20-years-old male, purple hair, bob cut, purple eyes, cowboy shot, detailed eyes, long detailed beautiful eyelashes"
+    );
+  });
+
   // ---- --sref 多值 ----
 
   it("--sref 多值 (空格分隔的 URL)", () => {

@@ -163,9 +163,10 @@ export function parseMjPrompt(raw: string): MjParsedResult {
     markRange(match.index, match.index + match[0].length);
   }
 
-  // ---- 14. Handle --p / --personalize ----
+  // ---- 14. Handle --p / --personalize / --profile ----
   // --p can appear alone (use default profile) or with a value
-  const personalizeRegex = /--(?:p|personalize)(?:\s+([a-zA-Z0-9_-]+))?(?=\s--|$|\s+--)/gi;
+  // --profile is a synonym for --personalize in Midjourney
+  const personalizeRegex = /--(?:p|personalize|profile)(?:\s+([a-zA-Z0-9_-]+))?(?=\s--|$|\s+--)/gi;
   while ((match = personalizeRegex.exec(input)) !== null) {
     params.mj_personalize = match[1] || "default";
     markRange(match.index, match.index + match[0].length);
