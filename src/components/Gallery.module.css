@@ -1,0 +1,71 @@
+.container {
+  width: 100%;
+}
+
+.stats {
+  padding: 0 var(--space-4);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: var(--bg-primary);
+  border: none;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-clay-sm);
+}
+
+.skeletonImg {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.skeletonInfo {
+  padding: var(--space-4);
+}
+
+.skeletonBadge {
+  width: 48px;
+  height: 20px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.skeletonTitle {
+  width: 80%;
+  height: 16px;
+  border-radius: var(--radius-md);
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+  color: var(--text-tertiary);
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-4);
+}
+
+.pageInfo {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}

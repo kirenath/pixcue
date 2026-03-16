@@ -1,0 +1,43 @@
+.wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--card-radius);
+}
+
+.content {
+  filter: blur(20px);
+  transition: filter var(--transition-base);
+}
+
+.revealed {
+  filter: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 5;
+}
+
+.overlayContent {
+  text-align: center;
+  color: #ffffff;
+}
+
+.icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+  opacity: 0.9;
+}

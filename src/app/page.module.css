@@ -1,0 +1,136 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: var(--space-8);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.bgGlow {
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 255, 0.12) 0%,
+    rgba(34, 211, 238, 0.06) 50%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="dark"] .bgGlow {
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 255, 0.2) 0%,
+    rgba(34, 211, 238, 0.08) 50%,
+    transparent 70%
+  );
+}
+
+/* 主题切换 */
+.themeToggle {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-size: var(--text-xl);
+  z-index: 10;
+}
+
+/* Hero 区域 */
+.hero {
+  text-align: center;
+  z-index: 1;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.logoGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.logoIcon {
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(124, 58, 255, 0.3));
+}
+
+.title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text-primary) 40%, var(--color-primary-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.titleAccent {
+  background: linear-gradient(135deg, var(--color-primary-400), var(--color-accent-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.subtitleDivider {
+  margin-inline: var(--space-2);
+  opacity: 0.4;
+}
+
+.description {
+  font-size: var(--text-base);
+  color: var(--text-tertiary);
+}
+
+/* Platform badges */
+.badges {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-8);
+  z-index: 1;
+  animation: fadeInUp 0.6s ease 0.15s forwards;
+  opacity: 0;
+}
+
+/* Status */
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  z-index: 1;
+  animation: fadeInUp 0.6s ease 0.3s forwards;
+  opacity: 0;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse-glow 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}

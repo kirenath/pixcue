@@ -1,0 +1,8 @@
+# docker-compose.yml
+services:
+  pixcue:
+    build: .
+    ports:
+      - "3100:3000"
+    env_file: .env
+    restart: unless-stopped

@@ -1,0 +1,61 @@
+.header {
+  position: sticky;
+  top: var(--space-4);
+  width: calc(100% - var(--space-8));
+  max-width: var(--max-width);
+  margin-inline: auto;
+  z-index: var(--z-sticky);
+  background: var(--bg-primary);
+  border: none;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-5) var(--space-6);
+  box-shadow: var(--shadow-clay);
+  transition: all 200ms ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Row 1: Logo + Actions */
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+}
+
+.logoText {
+  font-size: var(--text-xl);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.accent {
+  background: linear-gradient(135deg, var(--color-primary-400), var(--color-accent-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Row 2: Search */
+.searchRow {
+  display: flex;
+  justify-content: center;
+}
+
+.searchRow :global(.input) {
+  max-width: 500px;
+}
